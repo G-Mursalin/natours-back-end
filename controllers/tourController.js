@@ -2,6 +2,7 @@ const Tour = require("./../models/tourModel");
 const APIFeatures = require("./../utils/apiFeatures");
 const { catchAsync } = require("./../utils/catchAsync");
 
+// Middleware
 const aliasToTours = (req, res, next) => {
   req.query.limit = 5;
   req.query.sort = "price ratingsAverage";
@@ -9,6 +10,7 @@ const aliasToTours = (req, res, next) => {
   next();
 };
 
+// Controllers
 const getAllTours = catchAsync(async (req, res) => {
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()
