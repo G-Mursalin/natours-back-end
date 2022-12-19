@@ -22,18 +22,20 @@ const getAllTours = catchAsync(async (req, res) => {
   res.status(200).send({
     status: "success",
     results: tours.length,
-    tours,
+    data: { tours },
   });
 });
 
 const createATour = catchAsync(async (req, res) => {
   const newTour = await Tour.create(req.body);
-  res.status(201).send({ status: "Tour Created Successfully", data: newTour });
+  res
+    .status(201)
+    .send({ status: "Tour Created Successfully", data: { tour: newTour } });
 });
 
 const getATour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
-  res.status(200).send({ status: "success", tour });
+  res.status(200).send({ status: "success", data: { tour } });
 });
 
 const updateATour = catchAsync(async (req, res, next) => {
@@ -42,12 +44,36 @@ const updateATour = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
-  res.status(200).send({ status: "successfully updated", updated_data: tour });
+  res.status(200).send({ status: "successfully updated", data: { tour } });
 });
 
 const deleteATour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
   res.status(204).send({ status: "successfully deleted", data: null });
+});
+
+const getTourStats = catchAsync(async (req, res, next) => {
+  const stats = await Tour.aggregate([
+    {
+      $match: {},
+    },
+    {
+      $group: {
+        _id: { $toUpper: "$difficulty" },
+        numTours: { $sum: 1 },
+        numRatings: { $sum: "$ratingsQuantity" },
+        avgRatings: { $avg: "$ratingsAverage" },
+        avgPrice: { $avg: "$price" },
+        minPrice: { $min: "$price" },
+        maxPrice: { $max: "$price" },
+      },
+    },
+    {
+      $sort: { avgPrice: -1 },
+    },
+  ]);
+
+  res.status(200).send({ status: "success", data: { stats } });
 });
 
 module.exports = {
@@ -57,4 +83,5 @@ module.exports = {
   updateATour,
   deleteATour,
   aliasToTours,
+  getTourStats,
 };
