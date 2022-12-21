@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 //Schema
 const userSchema = new mongoose.Schema({
@@ -45,6 +46,16 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
+});
+
+// Document Middleware for password hashing
+userSchema.pre("save", async function (next) {
+  //Only run this function if password is modified
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
 });
 
 // Model
