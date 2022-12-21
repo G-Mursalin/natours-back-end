@@ -37,7 +37,6 @@ const globalErrorController = (err, req, res, next) => {
 
   if (err.name === "ValidationError") {
     const errors = Object.values(err.errors).map((val) => val.message);
-
     error = new AppError(`Invalid Input Data. ${errors.join(". ")}`, 400);
     return sendResponse(error, res);
   }

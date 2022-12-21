@@ -15,7 +15,7 @@ app.use("/api/v1/tours", tourRoute);
 app.use("/api/v1/users", userRoute);
 
 app.all("*", (req, res, next) => {
-  next(new AppError(`Can't not fine ${req.originalUrl}`, 404));
+  next(new AppError(`Can't not fine ${req.originalUrl} on this server`, 404));
 });
 
 app.use(globalErrorController);
