@@ -48,7 +48,9 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Document Middleware for password hashing
+// Document Middleware:
+
+// For password hashing
 userSchema.pre("save", async function (next) {
   //Only run this function if password is modified
   if (!this.isModified("password")) return next();
@@ -57,6 +59,15 @@ userSchema.pre("save", async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+// Instance Methods:
+
+userSchema.methods.isPasswordCorrect = async function (
+  candidatePassword,
+  userPasswordDb
+) {
+  return await bcrypt.compare(candidatePassword, userPasswordDb);
+};
 
 // Model
 const User = mongoose.model("User", userSchema);
