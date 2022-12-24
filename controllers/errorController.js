@@ -41,6 +41,10 @@ const globalErrorController = (err, req, res, next) => {
     return sendResponse(error, res);
   }
 
+  if (err.message.startsWith("Unexpected token")) {
+    error = new AppError("Invalid Token.Please login again", 401);
+    return sendResponse(error, res);
+  }
   if (err.name === "JsonWebTokenError") {
     error = new AppError("Invalid Token.Please login again", 401);
     return sendResponse(error, res);
