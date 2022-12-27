@@ -13,6 +13,18 @@ const createToken = (id) => {
   });
 };
 
+const sendResponseWithToken = (user, statusCode, res) => {
+  const token = createToken(user._id);
+
+  res.status(statusCode).send({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 //Controllers
 const signUp = catchAsync(async (req, res, next) => {
   // const newUser = await User.create(req.body);
@@ -21,15 +33,7 @@ const signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
   newUser.password = undefined;
 
-  const token = createToken(newUser._id);
-
-  res.status(201).send({
-    status: "success",
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  sendResponseWithToken(newUser, 201, res);
 });
 
 const logIn = catchAsync(async (req, res, next) => {
@@ -45,12 +49,10 @@ const logIn = catchAsync(async (req, res, next) => {
     return next(new AppError("Invalid email or password", 401));
   }
 
-  const token = createToken(user._id);
+  user.password = undefined;
+  user.passwordChangedAt = undefined;
 
-  res.status(200).send({
-    status: "success",
-    token,
-  });
+  sendResponseWithToken(user, 200, res);
 });
 
 const protect = catchAsync(async (req, res, next) => {
@@ -162,12 +164,10 @@ const resetPassword = catchAsync(async (req, res, next) => {
 
   await user.save();
 
-  const token = createToken(user._id);
+  user.password = undefined;
+  user.passwordChangedAt = undefined;
 
-  res.status(200).send({
-    status: "Successfully Changed Password",
-    token,
-  });
+  sendResponseWithToken(user, 200, res);
 });
 
 const updatePassword = catchAsync(async (req, res, next) => {
@@ -183,12 +183,10 @@ const updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.newPasswordConfirm;
   await user.save();
 
-  const token = createToken(user._id);
+  user.password = undefined;
+  user.passwordChangedAt = undefined;
 
-  res.status(200).send({
-    status: "Successfully Updated Password",
-    token,
-  });
+  sendResponseWithToken(user, 200, res);
 });
 
 module.exports = {
