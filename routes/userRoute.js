@@ -9,8 +9,10 @@ const {
 const {
   signUp,
   logIn,
+  protect,
   forgetPassword,
   resetPassword,
+  updatePassword,
 } = require("./../controllers/authController");
 
 // Routs
@@ -21,6 +23,8 @@ router.post("/login", logIn);
 
 router.post("/forgot-password", forgetPassword);
 router.patch("/reset-password/:token", resetPassword);
+
+router.patch("/update-my-password", protect, updatePassword);
 
 router.route("/").get(getAllUsers).post(postAUser);
 router.route("/:id").get(getAUser).delete(deleteAUser).patch(updateAUser);
