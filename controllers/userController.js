@@ -42,6 +42,15 @@ const updateMe = catchAsync(async (req, res, next) => {
   res.status(200).send({ status: "success", data: { user: updatedUser } });
 });
 
+const deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).send({
+    status: "success",
+    data: null,
+  });
+});
+
 const postAUser = (req, res) => {
   res.status(500).send({ message: "This route is not define yet (postAUser)" });
 };
@@ -65,6 +74,7 @@ const updateAUser = (req, res) => {
 module.exports = {
   getAllUsers,
   updateMe,
+  deleteMe,
   postAUser,
   getAUser,
   deleteAUser,

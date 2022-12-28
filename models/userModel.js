@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Document Middleware:
+// ******************Document Middleware:
 
 // For password hashing [authController]
 userSchema.pre("save", async function (next) {
@@ -70,7 +70,15 @@ userSchema.pre("save", function (next) {
   next();
 });
 
-// Instance Methods:
+// ****************Query Middleware:
+
+//For don't show the deleted user to client(active field is false)
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: true });
+  next();
+});
+
+//****************** Instance Methods:
 
 // Check is password correct or not [authController]
 userSchema.methods.isPasswordCorrect = async function (
