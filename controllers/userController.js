@@ -1,5 +1,18 @@
 const User = require("../models/userModel");
+const AppError = require("../utils/appError");
 const { catchAsync } = require("../utils/catchAsync");
+
+// Helping Functions
+const filterObj = (obj, ...allowedField) => {
+  const newObj = {};
+
+  Object.keys(obj).forEach((el) => {
+    if (allowedField.includes(el)) newObj[el] = obj[el];
+  });
+
+  return newObj;
+};
+
 // Handlers
 const getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
@@ -9,6 +22,24 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     results: users.length,
     data: { users },
   });
+});
+
+const updateMe = catchAsync(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(new AppError("This route is not for password update", 400));
+  }
+
+  const filterBody = filterObj(req.body, "name", "email");
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
+    new: true,
+    runValidators: true,
+  });
+
+  updatedUser.password = undefined;
+  updatedUser.passwordChangedAt = undefined;
+  updatedUser.passwordResetToken = undefined;
+
+  res.status(200).send({ status: "success", data: { user: updatedUser } });
 });
 
 const postAUser = (req, res) => {
@@ -31,4 +62,11 @@ const updateAUser = (req, res) => {
     .send({ message: "This route is not define yet (updateAUser)" });
 };
 
-module.exports = { getAllUsers, postAUser, getAUser, deleteAUser, updateAUser };
+module.exports = {
+  getAllUsers,
+  updateMe,
+  postAUser,
+  getAUser,
+  deleteAUser,
+  updateAUser,
+};

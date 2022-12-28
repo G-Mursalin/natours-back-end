@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
 
 // Document Middleware:
 
-// For password hashing
+// For password hashing [authController]
 userSchema.pre("save", async function (next) {
   //Only run this function if password is modified
   if (!this.isModified("password")) return next();
@@ -61,7 +61,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// For when you change the password
+// For when you change the password [authController]
 userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
 
@@ -72,6 +72,7 @@ userSchema.pre("save", function (next) {
 
 // Instance Methods:
 
+// Check is password correct or not [authController]
 userSchema.methods.isPasswordCorrect = async function (
   candidatePassword,
   userPasswordDb
@@ -79,6 +80,7 @@ userSchema.methods.isPasswordCorrect = async function (
   return await bcrypt.compare(candidatePassword, userPasswordDb);
 };
 
+// Check if user change password after token issued [authController]
 userSchema.methods.isUserChangedPasswordAfterTokenIssued = function (
   JWTTimestamp
 ) {
@@ -94,6 +96,7 @@ userSchema.methods.isUserChangedPasswordAfterTokenIssued = function (
   return false;
 };
 
+// For creating password reset token which send via email [authController]
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
