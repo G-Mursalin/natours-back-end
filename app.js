@@ -1,5 +1,6 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 const cors = require("cors");
 const app = express();
 const tourRoute = require("./routes/tourRoute");
@@ -8,10 +9,13 @@ const AppError = require("./utils/appError");
 const { globalErrorController } = require("./controllers/errorController");
 
 //Middleware
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
 app.use(cors());
 
 //***Security:
+
+//HTTP Headers
+app.use(helmet());
 
 // Rate Limiting
 const limiter = rateLimit({
