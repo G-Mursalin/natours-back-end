@@ -2,7 +2,6 @@ const AppError = require("./../utils/appError");
 
 const sendResponse = (error, res) => {
   if (!error.isOperational) {
-    console.log(error);
     return res.status(500).send({
       status: "error",
       message: "Something went wrong!",

@@ -3,6 +3,7 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
+const hpp = require("hpp");
 const cors = require("cors");
 const app = express();
 const tourRoute = require("./routes/tourRoute");
@@ -18,6 +19,9 @@ app.use(cors());
 
 //HTTP Headers
 app.use(helmet());
+
+// Preventing parameter pollution
+app.use(hpp());
 
 // Rate Limiting
 const limiter = rateLimit({
