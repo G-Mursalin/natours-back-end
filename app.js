@@ -1,4 +1,5 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 const app = express();
 const tourRoute = require("./routes/tourRoute");
@@ -9,6 +10,16 @@ const { globalErrorController } = require("./controllers/errorController");
 //Middleware
 app.use(express.json());
 app.use(cors());
+
+//***Security:
+
+// Rate Limiting
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many requests sent by this IP, please try again in an hour !",
+});
+app.use("/api", limiter);
 
 //Routs
 app.use("/api/v1/tours", tourRoute);
