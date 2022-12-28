@@ -1,6 +1,8 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
 const cors = require("cors");
 const app = express();
 const tourRoute = require("./routes/tourRoute");
@@ -24,6 +26,11 @@ const limiter = rateLimit({
   message: "Too many requests sent by this IP, please try again in an hour !",
 });
 app.use("/api", limiter);
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+//  Data sanitization against XSS
+app.use(xss());
 
 //Routs
 app.use("/api/v1/tours", tourRoute);
