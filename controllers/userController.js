@@ -15,7 +15,9 @@ const filterObj = (obj, ...allowedField) => {
 
 // Handlers
 const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
+  const users = await User.find().select(
+    "-passwordChangedAt -passwordResetExpires -passwordResetToken"
+  );
 
   res.status(200).send({
     status: "success",
