@@ -8,6 +8,7 @@ const cors = require("cors");
 const app = express();
 const tourRoute = require("./routes/tourRoute");
 const userRoute = require("./routes/userRoute");
+const reviewRoute = require("./routes/reviewRoute");
 const AppError = require("./utils/appError");
 const { globalErrorController } = require("./controllers/errorController");
 
@@ -39,6 +40,7 @@ app.use(xss());
 //Routs
 app.use("/api/v1/tours", tourRoute);
 app.use("/api/v1/users", userRoute);
+app.use("/api/v1/reviews", reviewRoute);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't not fine ${req.originalUrl} on this server`, 404));
