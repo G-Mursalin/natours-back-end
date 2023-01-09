@@ -10,7 +10,7 @@ const aliasToTours = (req, res, next) => {
   next();
 };
 
-// Controllers
+// Handlers
 const getAllTours = catchAsync(async (req, res) => {
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()

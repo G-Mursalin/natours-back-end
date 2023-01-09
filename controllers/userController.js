@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
+const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const { catchAsync } = require("../utils/catchAsync");
-
 // Helping Functions
 const filterObj = (obj, ...allowedField) => {
   const newObj = {};
@@ -15,9 +15,17 @@ const filterObj = (obj, ...allowedField) => {
 
 // Handlers
 const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find().select(
-    "-passwordChangedAt -passwordResetExpires -passwordResetToken"
-  );
+  const features = new APIFeatures(
+    User.find().select(
+      "-passwordChangedAt -passwordResetExpires -passwordResetToken"
+    ),
+    req.query
+  )
+    .filter()
+    .sort()
+    .filterLimiting()
+    .pagination();
+  const users = await features.query;
 
   res.status(200).send({
     status: "success",
@@ -53,13 +61,13 @@ const deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-const postAUser = (req, res) => {
-  res.status(500).send({ message: "This route is not define yet (postAUser)" });
-};
-const getAUser = (req, res) => {
-  const { id } = req.params;
-  res.status(500).send({ message: "This route is not define yet (getAUser)" });
-};
+const getAUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new AppError("No user found with that ID", 404));
+  }
+  res.status(200).send({ status: "success", data: { user } });
+});
 
 const deleteAUser = catchAsync(async (req, res, next) => {
   const user = await User.findByIdAndDelete(req.params.id);
@@ -85,7 +93,6 @@ module.exports = {
   getAllUsers,
   updateMe,
   deleteMe,
-  postAUser,
   getAUser,
   deleteAUser,
   updateAUser,

@@ -3,7 +3,6 @@ const {
   getAllUsers,
   updateMe,
   deleteMe,
-  postAUser,
   getAUser,
   deleteAUser,
   updateAUser,
@@ -32,10 +31,10 @@ router.patch("/update-my-password", protect, updatePassword);
 router.patch("/update-me", protect, updateMe);
 router.delete("/delete-me", protect, deleteMe);
 
-router.route("/").get(getAllUsers).post(postAUser);
+router.route("/").get(getAllUsers);
 router
   .route("/:id")
-  .get(getAUser)
+  .get(protect, restrictTo("admin"), getAUser)
   .delete(protect, restrictTo("admin"), deleteAUser)
   .patch(protect, restrictTo("admin"), updateAUser);
 

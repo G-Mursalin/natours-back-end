@@ -4,6 +4,7 @@ const {
   createAReview,
   deleteAReview,
   updateAReview,
+  getAReview,
   setTourUserIDs,
 } = require("../controllers/reviewController");
 const { protect, restrictTo } = require("../controllers/authController");
@@ -17,6 +18,7 @@ router
 
 router
   .route("/:id")
+  .get(protect, restrictTo("admin"), getAReview)
   .delete(protect, restrictTo("admin"), deleteAReview)
   .patch(protect, restrictTo("admin"), updateAReview);
 

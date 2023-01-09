@@ -1,4 +1,5 @@
 const Review = require("../models/reviewModel");
+const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const { catchAsync } = require("../utils/catchAsync");
 
@@ -7,7 +8,12 @@ const getAllReviews = catchAsync(async (req, res, next) => {
   let filter = {};
   if (req.params.tourId) filter = { tour: req.params.tourId };
 
-  const reviews = await Review.find(filter);
+  const features = new APIFeatures(Review.find(filter), req.query)
+    .filter()
+    .sort()
+    .filterLimiting()
+    .pagination();
+  const reviews = await features.query;
 
   res.status(200).send({
     status: "success",
@@ -50,10 +56,19 @@ const updateAReview = catchAsync(async (req, res, next) => {
   res.status(200).send({ status: "successfully updated", data: { review } });
 });
 
+const getAReview = catchAsync(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) {
+    return next(new AppError("No review found with that ID", 404));
+  }
+  res.status(200).send({ status: "success", data: { review } });
+});
+
 module.exports = {
   getAllReviews,
   createAReview,
   deleteAReview,
   updateAReview,
   setTourUserIDs,
+  getAReview,
 };
