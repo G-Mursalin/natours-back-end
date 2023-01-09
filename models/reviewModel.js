@@ -16,6 +16,7 @@ const reviewSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      select: false,
     },
     tour: {
       type: mongoose.Schema.ObjectId,

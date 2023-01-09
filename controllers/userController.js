@@ -60,18 +60,26 @@ const getAUser = (req, res) => {
   const { id } = req.params;
   res.status(500).send({ message: "This route is not define yet (getAUser)" });
 };
-const deleteAUser = (req, res) => {
-  const { id } = req.params;
-  res
-    .status(500)
-    .send({ message: "This route is not define yet (deleteAUser)" });
-};
-const updateAUser = (req, res) => {
-  const { id } = req.params;
-  res
-    .status(500)
-    .send({ message: "This route is not define yet (updateAUser)" });
-};
+
+const deleteAUser = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+  if (!user) {
+    return next(new AppError("No user found with that ID", 404));
+  }
+  res.status(204).send({ status: "successfully deleted", data: null });
+});
+
+// Don't update password with this!
+const updateAUser = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!user) {
+    return next(new AppError("No user found with that ID", 404));
+  }
+  res.status(200).send({ status: "successfully updated", data: { user } });
+});
 
 module.exports = {
   getAllUsers,

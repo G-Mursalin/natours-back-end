@@ -23,7 +23,7 @@ router.route("/").get(protect, getAllTours).post(createATour);
 router
   .route("/:id")
   .get(getATour)
-  .delete(protect, restrictTo("admin"), deleteATour)
-  .patch(updateATour);
+  .delete(protect, restrictTo("admin", "lead-guide"), deleteATour)
+  .patch(protect, restrictTo("admin", "lead-guide"), updateATour);
 
 module.exports = router;
