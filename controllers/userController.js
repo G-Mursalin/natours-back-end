@@ -61,8 +61,18 @@ const deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
+const getMe = async (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 const getAUser = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id);
+
+  user.password = undefined;
+  user.passwordChangedAt = undefined;
+  user.passwordResetToken = undefined;
+
   if (!user) {
     return next(new AppError("No user found with that ID", 404));
   }
@@ -96,4 +106,5 @@ module.exports = {
   getAUser,
   deleteAUser,
   updateAUser,
+  getMe,
 };

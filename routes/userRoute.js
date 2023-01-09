@@ -6,6 +6,7 @@ const {
   getAUser,
   deleteAUser,
   updateAUser,
+  getMe,
 } = require("./../controllers/userController");
 const {
   signUp,
@@ -22,6 +23,8 @@ const router = express.Router();
 
 router.post("/signup", signUp);
 router.post("/login", logIn);
+
+router.get("/me", protect, getMe, getAUser);
 
 router.post("/forgot-password", forgetPassword);
 router.patch("/reset-password/:token", resetPassword);
