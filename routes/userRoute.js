@@ -34,7 +34,7 @@ router.patch("/update-my-password", protect, updatePassword);
 router.patch("/update-me", protect, updateMe);
 router.delete("/delete-me", protect, deleteMe);
 
-router.route("/").get(getAllUsers);
+router.route("/").get(protect, restrictTo("admin"), getAllUsers);
 router
   .route("/:id")
   .get(protect, restrictTo("admin"), getAUser)

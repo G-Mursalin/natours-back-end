@@ -18,8 +18,8 @@ router
 
 router
   .route("/:id")
-  .get(protect, restrictTo("admin"), getAReview)
-  .delete(protect, restrictTo("admin"), deleteAReview)
-  .patch(protect, restrictTo("admin"), updateAReview);
+  .get(getAReview)
+  .delete(protect, restrictTo("user", "admin"), deleteAReview)
+  .patch(protect, restrictTo("user", "admin"), updateAReview);
 
 module.exports = router;
